@@ -51,6 +51,7 @@ library
       base >=4.13 && <4.14
     , containers
     , lens
+    , megaparsec
     , safe
     , split
   hs-source-dirs:      src
