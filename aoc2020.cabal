@@ -52,6 +52,9 @@ library
     , containers
     , lens
     , megaparsec
+    , memoize
+    , mtl
+    , multiset
     , safe
     , split
   hs-source-dirs:      src
