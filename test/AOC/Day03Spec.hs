@@ -8,6 +8,7 @@ spec = do
   describe "day03 part1" $ do
     it "tree count" $ do
       go1 input `shouldBe` Just 7
+  describe "day03 part2" $ do
     it "tree product" $ do
       go2 input `shouldBe` Just 336
 
