@@ -38,7 +38,7 @@ target = Bag "shiny" "gold"
 
 data Rules = Rules Bag (MultiSet Bag)
 
-newtype RuleMap = RuleMap {unRuleMap :: Map Bag (MultiSet Bag)}
+newtype RuleMap = RuleMap (Map Bag (MultiSet Bag))
     deriving (Show)
 
 type Parser = Parsec Void String
@@ -61,26 +61,14 @@ bagSetP = MultiSet.fromList <$> (emptySetP <|> nonEmptySetP)
     nonEmptySetP = concat <$> ruleP `sepBy` string ", "
     ruleP = replicate <$> decimal <* spaceChar <*> bagP <* (string "bags" <|> string "bag")
 
-lookupBag :: Bag -> RuleMap -> MultiSet Bag
-lookupBag bag (RuleMap m) = fromMaybe mempty $ Map.lookup bag m
-
 numContainingTarget :: Bag -> RuleMap -> Int
-numContainingTarget target ruleMap = pred . snd . foldr foldAccum (mempty, 0) . Map.keys $ unRuleMap ruleMap
+numContainingTarget target (RuleMap m) = pred . length . filter id . map go $ Map.keys m
   where
-    foldAccum :: Bag -> (Map Bag Bool, Int) -> (Map Bag Bool, Int)
-    foldAccum bag (m, n) = second (bool n $ succ n) $ containsBag bag m
-    containsBag :: Bag -> Map Bag Bool -> (Map Bag Bool, Bool)
-    containsBag b m
-        | b == target = (m, True)
-        | otherwise = maybe (containsBagRecur b m) (m,) $ Map.lookup b m
-    containsBagRecur :: Bag -> Map Bag Bool -> (Map Bag Bool, Bool)
-    containsBagRecur b m =
-        foldr f (m, False)
-            . MultiSet.distinctElems
-            $ lookupBag b ruleMap
+    go = memoize go' . unBag
+    go' (s, t) = bag == target || isNested
       where
-        f :: Bag -> (Map Bag Bool, Bool) -> (Map Bag Bool, Bool)
-        f bag (m, b) = let (m', b') = containsBag bag m in (Map.insert bag b' m', b || b')
+        bag = Bag s t
+        isNested = any go . MultiSet.distinctElems . fromMaybe mempty $ Map.lookup bag m
 
 totalBagsInTarget :: Bag -> RuleMap -> Int
 totalBagsInTarget target (RuleMap m) = pred . memoize go $ unBag target
