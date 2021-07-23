@@ -1,5 +1,3 @@
-{-# LANGUAGE TupleSections #-}
-
 module AOC.Day07 (day07) where
 
 import AOC.Types
