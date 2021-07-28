@@ -4,7 +4,7 @@ import AOC.Types
 
 import Data.Bifunctor (bimap)
 import Data.Foldable (foldl')
-import Data.List (span)
+import Data.List (break)
 import Data.Set (Set)
 import qualified Data.Set as Set
 
@@ -21,7 +21,7 @@ parseInput = toSets . lines
   where
     toSets = toSets' . dropWhile null
     toSets' [] = []
-    toSets' xs = uncurry (:) . bimap (map Set.fromList) toSets . span (not . null) $ xs
+    toSets' xs = uncurry (:) . bimap (map Set.fromList) toSets . break null $ xs
 
 groupSum :: Ord a => (Set a -> Set a -> Set a) -> [[Set a]] -> Int
 groupSum f = sum . map (Set.size . setMerge)

@@ -1,4 +1,3 @@
-{-# LANGUAGE TupleSections #-}
 module AOC.Day01 (day01) where
 
 import Safe (headMay, readMay)

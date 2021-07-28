@@ -87,8 +87,8 @@ hgtP :: Parser Height
 hgtP = f <$> decimal <*> (inP <|> cmP) <* eof
   where
     f n constructor = constructor n
-    inP = const In <$> string "in"
-    cmP = const Cm <$> string "cm"
+    inP = In <$ string "in"
+    cmP = Cm <$ string "cm"
 
 hclP :: Parser String
 hclP = char '#' *> count 6 hexDigitChar <* eof

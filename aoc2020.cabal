@@ -51,6 +51,7 @@ library
       base
     , containers
     , lens
+    , ListZipper
     , megaparsec
     , memoize
     , mtl
