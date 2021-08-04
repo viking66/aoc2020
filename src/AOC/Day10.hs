@@ -10,19 +10,13 @@ import Safe (readMay)
 
 day10 :: Solution [Int] Int Int
 day10 = Solution
-  { parse = fmap sort . traverse readMay . lines
-  , part1 = Just . joltageDiffProduct
-  , part2 = Just . countAdapterArrangements
+  { parse = fmap groupAdaptors . traverse readMay . lines
+  , part1 = \xs -> Just $ sum xs * (length xs - 1)
+  , part2 = Just . product . map fib3
   }
 
-joltageDiffProduct :: [Int] -> Int
-joltageDiffProduct = go
-  where
-    go [] = 0
-    go xss@(_:xs) = product . map (succ . length) . group . sort $ zipWith (-) xs xss
-
-countAdapterArrangements :: [Int] -> Int
-countAdapterArrangements = product . map (fib3 . pred . length) . runs . extend
+groupAdaptors :: [Int] -> [Int]
+groupAdaptors = map (pred . length) . runs . extend . sort
   where
     extend [] = []
     extend xs = 0:xs<>[3 + maximum xs]
@@ -32,9 +26,10 @@ countAdapterArrangements = product . map (fib3 . pred . length) . runs . extend
         splitRun [] = ([], [])
         splitRun xss@(x:xs) = bimap (map fst) (map fst) . span (uncurry (==)) $ zip xss [x..]
 
-    fib3 = memoFix go
-      where
-        go _ 0 = 1
-        go _ 1 = 1
-        go _ 2 = 2
-        go f n = f (n-1) + f (n-2) + f (n-3)
+fib3 :: Int -> Int
+fib3 = memoFix go
+  where
+    go f n
+        | n < 2 = 1
+        | n == 2 = 2
+        | otherwise = f (n-1) + f (n-2) + f (n-3)
