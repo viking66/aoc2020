@@ -18,9 +18,6 @@ day12 =
 data Action = N Int | S Int | E Int | W Int | T Int | F Int
     deriving (Show)
 
-data Direction = North | East | South | West
-    deriving (Show, Eq, Ord, Enum, Bounded)
-
 data Coord = Coord Int Int
     deriving (Show)
 
@@ -39,12 +36,11 @@ parseAction (x : xs) = action <*> readMay xs
         'S' -> Just S
         'E' -> Just E
         'W' -> Just W
-        'L' -> Just $ T . (dirCount -) . turns
+        'L' -> Just $ T . (4 -) . turns
         'R' -> Just $ T . turns
         'F' -> Just F
         _ -> Nothing
-    turns = (`mod` dirCount) . (`div` 90)
-    dirCount = succ $ fromEnum (maxBound :: Direction)
+    turns = (`mod` 4) . (`div` 90)
 
 runActions :: (Ship -> Coord -> Ship) -> Coord -> [Action] -> Int
 runActions f w = distance . foldl' (handleAction f) (Ship w $ Coord 0 0)
