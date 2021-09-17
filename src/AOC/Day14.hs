@@ -78,7 +78,7 @@ runProgram f = sum . Map.elems . foldl' (runMemBlock f) Map.empty
 runMemBlock :: (Mem -> Mask -> Map Word64 Word64) -> Map.Map Word64 Word64 -> MemBlock -> Map.Map Word64 Word64
 runMemBlock f memory (MemBlock mask ms) = foldl' accum memory ms
   where
-    accum memMap mem = let memMap' = f mem mask in Map.union memMap' memMap
+    accum memMap mem = (`Map.union` memMap) $ f mem mask
 
 maskValue :: Mem -> Mask -> Map Word64 Word64
 maskValue (Mem i m) (Mask z o _) = Map.fromList [(i, z .&. m .|. o)]
