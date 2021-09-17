@@ -13,7 +13,7 @@ import Text.Megaparsec.Char (char, digitChar, newline, string)
 
 import AOC.Types
 
-day14 :: Solution [MemBlock] Integer Integer
+day14 :: Solution [MemBlock] Word64 Word64
 day14 =
     Solution
         { parse = parseMaybe memBlocksP
@@ -72,8 +72,8 @@ memP =
 word64P :: Parser Word64
 word64P = read <$> many digitChar
 
-runProgram :: (Mem -> Mask -> Map Word64 Word64) -> [MemBlock] -> Integer
-runProgram f = fromIntegral . sum . Map.elems . foldl' (runMemBlock f) Map.empty
+runProgram :: (Mem -> Mask -> Map Word64 Word64) -> [MemBlock] -> Word64
+runProgram f = sum . Map.elems . foldl' (runMemBlock f) Map.empty
 
 runMemBlock :: (Mem -> Mask -> Map Word64 Word64) -> Map.Map Word64 Word64 -> MemBlock -> Map.Map Word64 Word64
 runMemBlock f memory (MemBlock mask ms) = foldl' accum memory ms
